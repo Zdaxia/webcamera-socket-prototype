@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<script language="JavaScript" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+		<script language="JavaScript" src="//ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js"></script>
+		<script language="JavaScript" src="scriptcam.js"></script>
+		<script src="http://localhost:9001/socket.io/socket.io.js"></script>
+		<!-- change the 10.193.181.219 to your ip -->
+		<script src="http://10.193.181.219:9001/socket.io/socket.io.js"></script>
+		<script language="JavaScript"> 
+			var socket=io.connect(window.location.hostname.toString()+':9001'); //port for websocket.
+			socket.on('rocket', function(data) {
+                $('#image').attr("src","data:image/png;base64,"+data);
+            });
+			
+		</script> 
+	</head>
+	<body>
+		<div style="width:200px;float:left;">
+			<p><img id="image" style="width:1280px;height:960px;"/></p>
+		</div>
+	</body>
+</html>

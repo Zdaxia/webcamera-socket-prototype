@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<script language="JavaScript" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+		<script language="JavaScript" src="//ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js"></script>
+		<script language="JavaScript" src="scriptcam.js"></script>
+		<script src="http://localhost:9001/socket.io/socket.io.js"></script>
+		<!-- change the 10.193.181.219 to your ip -->
+		<script src="http://10.193.181.219:9001/socket.io/socket.io.js"></script>
+		<script language="JavaScript"> 
+
+			var socket=io.connect(window.location.hostname.toString()+':9001'); //port for websocket.
+
+			$(document).ready(function() {
+				$("#webcam").scriptcam({
+					showMicrophoneErrors:false,
+					onError:onError,
+					onWebcamReady:onWebcamReady,
+					onPictureAsBase64:base64_tofield_and_image,
+					width: 640,
+        			height: 480
+				});
+			});
+			
+			function base64_toimage() {
+				var imgData;
+				imgData=$.scriptcam.getFrameAsBase64();
+				socket.emit('picdata', imgData); //emit the data to websockets.	
+			};
+			function base64_tofield_and_image(b64) {
+				$('#formfield').val(b64);
+				$('#image').attr("src","data:image/png;base64,"+b64);
+			};
+			function onError(errorId,errorMsg) {
+				$( "#btn1" ).attr( "disabled", true );
+				$( "#btn2" ).attr( "disabled", true );
+				alert(errorMsg);
+			}			
+			function onWebcamReady(cameraNames,camera,microphoneNames,microphone,volume) {
+				$.each(cameraNames, function(index, text) {
+					$('#cameraNames').append( $('<option></option>').val(index).html(text) )
+				}); 
+				$('#cameraNames').val(camera);
+			}
+		</script> 
+	</head>
+	<body>
+		<div style="width:640px;float:left;">
+			<div id="webcam"></div>
+		</div>
+		<div style="width:135px;">
+			<p><button class="btn btn-small" id="btn2" onclick="base64_toimage()">Snapshot to image</button></p>
+		</div>
+		
+	</body>
+</html>
